@@ -1,0 +1,43 @@
+services:
+  account:
+    container_name: account
+    build: ../account
+    volumes:
+      - ../account/src:/app
+    env_file:
+      - ../account/.env.example
+    ports:
+      - "8000:8000"
+    depends_on:
+      - account_db
+      - account_redis
+    restart: unless-stopped
+
+  accountdb:
+    container_name: accountdb
+    image: postgres:17.6-alpine3.22
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../account/.env.example
+    # environment:
+    #   - POSTGRES_DB=${POSTGRES_DB}
+    #   - POSTGRES_USER=${POSTGRES_USER}
+    #   - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  accountredis:
+    container_name: accountredis
+    image: redis:7.4.5-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+
+volumes:
+  postgres_data:
+  redis_data:
