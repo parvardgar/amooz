@@ -3,7 +3,7 @@ from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 
 from core.service.response import ResponseService
-from src.account import schema, service as acc_svc, command as acc_cmd
+from account import schema, service as acc_svc, command as acc_cmd
 
 router = Router()
 

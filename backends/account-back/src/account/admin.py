@@ -8,15 +8,11 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'medical_history', 'allergies', 'blood_type')
+    list_display = ('user', 'consecutive_login_days', 'school_name', 'grade')
 
 
 class VolunteerAdmin(admin.ModelAdmin):
     list_display = ('user', 'specialization', )
-
-
-class NurseAdmin(admin.ModelAdmin):
-    list_display = ('user', 'license_number', 'specialization', 'education')
 
 
 class TeacherAdmin(admin.ModelAdmin):
@@ -26,5 +22,4 @@ class TeacherAdmin(admin.ModelAdmin):
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.StudentProfile, StudentAdmin)
 admin.site.register(models.VolunteerProfile, VolunteerAdmin)
-admin.site.register(models.NurseProfile, NurseAdmin)
 admin.site.register(models.TeacherProfile, TeacherAdmin)

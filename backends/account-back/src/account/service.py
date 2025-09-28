@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model, authenticate
 from ninja_jwt.tokens import RefreshToken
 from ninja_jwt.schema import TokenObtainPairInputSchema
 
-from src.account import repository as acc_repo 
+from account import repository as acc_repo 
 
 class AuthService:
     def login(self, **params):
@@ -73,24 +73,6 @@ class StudentProfileService:
         # Add any business logic/validation here
         if user.role != 0:  
             raise ValueError("Only Students can have Student profiles")
-        return self.repository.create({"user": user, **kwargs})
-    
-    def update_profile(self, user_id: int, **kwargs):
-        # Add any business logic/validation here
-        return self.repository.update(user_id, **kwargs)
-    
-    def delete_profile(self, user_id: int):
-        self.repository.delete(user_id)
-    
-
-class NurseProfileService:
-    def __init__(self, repository: acc_repo.NurseProfileRepository):
-        self.repository = repository
-    
-    def create_profile(self, user: get_user_model, **kwargs):
-        # Add any business logic/validation here
-        if user.role != 2:  
-            raise ValueError("Only nurses can have nurse profiles")
         return self.repository.create({"user": user, **kwargs})
     
     def update_profile(self, user_id: int, **kwargs):

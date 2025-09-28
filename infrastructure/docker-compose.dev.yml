@@ -1,16 +1,16 @@
 services:
   account:
     container_name: account
-    build: ../account
+    build: ../backends/account-back
     volumes:
-      - ../account/src:/app
+      - ../backends/account-back/src:/app
     env_file:
-      - ../account/.env.example
+      - ../backends/account-back/.env.example
     ports:
       - "8000:8000"
     depends_on:
-      - account_db
-      - account_redis
+      - accountdb
+      - accountredis
     restart: unless-stopped
 
   accountdb:
@@ -19,11 +19,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ../account/.env.example
-    # environment:
-    #   - POSTGRES_DB=${POSTGRES_DB}
-    #   - POSTGRES_USER=${POSTGRES_USER}
-    #   - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ../backends/account-back/.env.example
     ports:
       - "5432:5432"
     restart: unless-stopped

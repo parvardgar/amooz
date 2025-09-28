@@ -1,7 +1,7 @@
 from typing import List, Optional, Dict, Any
 
 from core.repository.base import DjangoRepository
-from src.account import models as AccModels
+from account import models as AccModels
     
 
 class UserRepository(DjangoRepository[AccModels.User]):
@@ -67,38 +67,6 @@ class StudentProfileRepository(DjangoRepository[AccModels.StudentProfile]):
         """Business logic query"""
         return list(self.model_class.objects.exclude(allergies__isnull=True).exclude(allergies=""))
 
-
-class NurseProfileRepository(DjangoRepository[AccModels.NurseProfile]):
-    def __init__(self):
-        super().__init__(AccModels.NurseProfile)
-
-    def get_by_license_number(self, license_number: str) -> Optional[AccModels.NurseProfile]:
-        """Get nurse profile by license number"""
-        try:
-            return self.model.objects.get(license_number=license_number)
-        except self.model.DoesNotExist:
-            return None
-
-    def get_by_specialization(self, specialization: str) -> List[AccModels.NurseProfile]:
-        """Get all nurses with given specialization"""
-        return list(self.model.objects.filter(specialization__iexact=specialization))
-
-    def get_by_department(self, department: str) -> List[AccModels.NurseProfile]:
-        """Get all nurses in a specific department"""
-        return list(self.model.objects.filter(department__iexact=department))
-
-    def get_by_experience(self, min_years: int) -> List[AccModels.NurseProfile]:
-        """Get nurses with at least min_years of experience"""
-        return list(self.model.objects.filter(experience_years__gte=min_years))
-
-    # def search(self, query: str) -> List[AccModels.NurseProfile]:
-    #     """Search nurses by name, specialization, or department"""
-    #     return list(self.model.objects.filter(
-    #         Q(user__first_name__icontains=query) |
-    #         Q(user__last_name__icontains=query) |
-    #         Q(specialization__icontains=query) |
-    #         Q(department__icontains=query)
-    #     ))
 
 class TeacherProfileRepository(DjangoRepository[AccModels.TeacherProfile]):
     def __init__(self):

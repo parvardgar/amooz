@@ -5,7 +5,7 @@ from typing import Optional
 from django.db import transaction
 
 from core.cqrs.base import Command, BaseCommandHandler
-from src.account import repository, service, models as acc_mdl
+from account import repository, service, models as acc_mdl
 
 
 
@@ -87,7 +87,7 @@ class BaseProfileCommand(Command):
 class CreateStudentProfileCommand(BaseProfileCommand):
     school_address: Optional[str] = None
     school_name: Optional[str] = None
-    grade: Optional[str] 
+    grade: Optional[str] = None 
     consecutive_login_days: Optional[int] = None 
 
 
@@ -95,7 +95,7 @@ class CreateStudentProfileCommand(BaseProfileCommand):
 class UpdateStudentProfileCommand(BaseProfileCommand):
     school_address: Optional[str] = None
     school_name: Optional[str] = None
-    grade: Optional[str] 
+    grade: Optional[str] = None
     consecutive_login_days: Optional[int] = None 
 
 
