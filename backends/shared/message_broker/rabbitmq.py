@@ -209,4 +209,4 @@ class RabbitMQBroker(metaclass=SingletonMeta):
 
 
 # Global broker instance
-event_broker = RabbitMQBroker()
+rabbitmq_broker = RabbitMQBroker()
