@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import Optional
 from django.db import transaction
 
-from core.cqrs.base import Command, BaseCommandHandler
+from shared.cqrs.base import Command, BaseCommandHandler
 from account import repository, service, models as acc_mdl
 
 

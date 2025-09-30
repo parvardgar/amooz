@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from core.cqrs.base import Query, BaseQueryHandler
+
+from shared.cqrs.base import Query, BaseQueryHandler
 from account.repository import UserRepository
 
 @dataclass

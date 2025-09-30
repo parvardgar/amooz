@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any
 
-from core.repository.base import DjangoRepository
+from shared.repository.base import DjangoRepository
 from account import models as AccModels
     
 
