@@ -51,7 +51,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
+ASGI_APPLICATION = 'core.asgi.application'
 
 DATABASES = {
     'default': {
@@ -108,7 +108,7 @@ SESSION_CACHE_ALIAS = "session"
 CACHES = {
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://account-redis:6379/0",
+        "LOCATION": "redis://accountredis:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SOCKET_CONNECT_TIMEOUT": 2,  # seconds
@@ -121,7 +121,7 @@ CACHES = {
     },
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://account-redis:6379/1",
+        "LOCATION": "redis://accountredis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SOCKET_CONNECT_TIMEOUT": 2,  # seconds

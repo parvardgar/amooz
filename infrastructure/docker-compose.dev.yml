@@ -4,6 +4,7 @@ services:
     build: ../backends/account-back
     volumes:
       - ../backends/account-back/src:/app
+      - ../backends/shared:/app/shared
     env_file:
       - ../backends/account-back/.env.example
     ports:
