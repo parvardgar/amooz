@@ -7,7 +7,6 @@ SECRET_KEY = 'django-insecure-ne*-in^bkh%-8z$vj5kgl!^_s54-&aqe9919*1*)8lwv#pb4!f
 
 ALLOWED_HOSTS = []
 
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -15,7 +14,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    'corsheaders',
     'ninja_extra',
     'ninja_jwt.token_blacklist',
     
@@ -23,6 +23,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
