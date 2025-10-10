@@ -1,4 +1,5 @@
 services:
+  # Account Service #
   account:
     container_name: account
     build: ../backends/account-back
@@ -10,30 +11,27 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - accountdb
+      - accountpg
       - accountredis
     restart: unless-stopped
-
-  accountdb:
-    container_name: accountdb
+  accountpg:
+    container_name: accountpg
     image: postgres:17.6-alpine3.22
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - account_postgres_data:/var/lib/postgresql/data/
     env_file:
       - ../backends/account-back/.env.example
     ports:
       - "5432:5432"
     restart: unless-stopped
-
   accountredis:
     container_name: accountredis
     image: redis:7.4.5-alpine
     volumes:
-      - redis_data:/data
+      - account_redis_data:/data
     ports:
       - "6379:6379"
     restart: unless-stopped
-
   accountmongo:
     image: mongo:7.0.25-jammy
     container_name: accountmongo
@@ -42,10 +40,61 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
+      - account_mongodb_data:/data/db
 
+  # Chat Service #
+  chat:
+    container_name: chat
+    build: ../backends/chat-back
+    volumes:
+      - ../backends/chat-back/src:/app
+      - ../backends/shared:/app/shared
+    env_file:
+      - ../backends/chat-back/.env.example
+    ports:
+      - "8001:8000"
+    depends_on:
+      - chatpg
+      - chatredis
+    restart: unless-stopped
+  chatpg:
+    container_name: chatpg
+    image: postgres:17.6-alpine3.22
+    volumes:
+      - chat_postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../backends/chat-back/.env.example
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+  chatredis:
+    container_name: chatredis
+    image: redis:7.4.5-alpine
+    volumes:
+      - chat_redis_data:/data
+    ports:
+      - "6378:6379"
+    restart: unless-stopped
+  chatmongo:
+    image: mongo:7.0.25-jammy
+    container_name: chatmongo
+    env_file:
+      - ../backends/chat-back/.env.example
+    ports:
+      - "27018:27017"
+    volumes:
+      - chat_mongodb_data:/data/db
 
 volumes:
-  postgres_data:
-  redis_data:
-  mongodb_data:
+  account_postgres_data:
+    driver: local
+  account_redis_data:
+    driver: local
+  account_mongodb_data:
+    driver: local
+  chat_postgres_data:
+    driver: local
+  chat_redis_data:
+    driver: local
+  chat_mongodb_data:
+    driver: local
