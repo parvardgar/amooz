@@ -1,0 +1,221 @@
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = 'django-insecure-k8%s!xa44^4s^@$e6m0cw4kso(z3i(sphem3103qzl5q#apc-+'
+
+ALLOWED_HOSTS = []
+
+INSTALLED_APPS = [
+    'daphne',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'corsheaders',
+    'chat.apps.ChatConfig'
+]
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'core.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
+    }
+}
+
+
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STORAGES = {
+
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "session"
+
+CACHES = {
+    "session": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://accountredis:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 2,  # seconds
+            "SOCKET_TIMEOUT": 2,          # seconds
+            "IGNORE_EXCEPTIONS": True,     # Prevents cache failures from breaking requests
+            "PICKLE_VERSION": 4,          # Faster serialization
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            "COMPRESS_LEVEL": 3,          # Balance between CPU and size
+        }
+    },
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://accountredis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 2,  # seconds
+            "SOCKET_TIMEOUT": 2,          # seconds
+            "IGNORE_EXCEPTIONS": True,     # Prevents cache failures from breaking requests
+            "PICKLE_VERSION": 4,          # Faster serialization
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            "COMPRESS_LEVEL": 3,          # Balance between CPU and size
+        }
+    }
+}
+SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_NAME = 'admin_sessionid'  # Rename to avoid conflicts with APIs
+SESSION_COOKIE_PATH = '/admin/'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(
+                os.environ.get('REDIS_HOST'),
+                os.environ.get('REDIS_PORT')
+            )],
+        },
+    },
+}
+
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'django_logs')
+MONGODB_LOG_COLLECTION = os.environ.get('MONGODB_LOG_COLLECTION', 'account_logs')
+ENABLE_MONGO_LOGGING = os.environ.get('ENABLE_MONGO_LOGGING', 'True').lower() == 'true'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'docker': {
+            'format': '[{asctime}] [{levelname}] {module} - {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'docker',
+            'stream': 'ext://sys.stdout',
+        },
+        'mongodb': {
+            'level': 'INFO',
+            'class': 'shared.utils.mongo_logger.MongoDBHandler',
+            'formatter': 'verbose',
+        } if ENABLE_MONGO_LOGGING else {},
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'application': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'request': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'security': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'performance': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+        'level': 'INFO',
+    },
+}
