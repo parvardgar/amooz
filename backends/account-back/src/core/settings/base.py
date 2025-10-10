@@ -150,3 +150,72 @@ CUSTOM_VALIDATION_MESSAGES = {
     'Input should be less than or equal to 20': 'این مقدار نمی تواند بزرگتر از 20 باشد',
     'Decimal input should have no more than 2 digits in total': 'مقدار مورد نظر می تواند بین 0 و 9 با یک رقم ممیز باشد'
 }
+
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'django_logs')
+MONGODB_LOG_COLLECTION = os.environ.get('MONGODB_LOG_COLLECTION', 'account_logs')
+ENABLE_MONGO_LOGGING = os.environ.get('ENABLE_MONGO_LOGGING', 'True').lower() == 'true'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'docker': {
+            'format': '[{asctime}] [{levelname}] {module} - {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'docker',
+            'stream': 'ext://sys.stdout',
+        },
+        'mongodb': {
+            'level': 'INFO',
+            'class': 'shared.utils.mongo_logger.MongoDBHandler',
+            'formatter': 'verbose',
+        } if ENABLE_MONGO_LOGGING else {},
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'application': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'request': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'security': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'performance': {
+            'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'] + (['mongodb'] if ENABLE_MONGO_LOGGING else []),
+        'level': 'INFO',
+    },
+}

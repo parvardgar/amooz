@@ -1,4 +1,5 @@
 from typing import Optional
+import logging
 from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 
@@ -7,6 +8,10 @@ from account import schema, service as acc_svc, command as acc_cmd
 
 router = Router()
 
+logger = logging.getLogger('application')
+request_logger = logging.getLogger('request')
+security_logger = logging.getLogger('security')
+performance_logger = logging.getLogger('performance')
 
 @router.post('/register', auth=None)
 def register(request, user_data: schema.RegisterSchemaIn):
@@ -14,15 +19,20 @@ def register(request, user_data: schema.RegisterSchemaIn):
         command = acc_cmd.CreateUserCommand(**user_data.dict())
         handler = acc_cmd.UserCommandHandler()
         user = handler.handle(command)
+        login_data = acc_svc.AuthService().login(**user_data.dict())
+        logger.info(f'Register Success  for User{user.mobile}')
         return ResponseService.success(
             message='ثبت نام موفق!',
             data={
                 'mobile': user.mobile,
-                'role': user.get_role_display()
+                'role': user.get_role_display(),
+                'access': login_data.get('access'),
+                'refresh': login_data.get('refresh')
             },
             status_code=201
         )
     except Exception as e:
+        logger.error(f"Error in register view: {str(e)}", exc_info=True)
         return ResponseService.error(
                 message='ثبت نام ناموفق!',
                 errors={'detail': str(e)},
@@ -34,6 +44,7 @@ def login(request, user_data: schema.LoginSchemaIn):
     try:
         service = acc_svc.AuthService()
         user = service.login(**user_data.dict())
+        logger.info(f'Login Success  for User{user.get('mobile')}')
         return ResponseService.success(
                 message='ورود موفق!',
                 data={
@@ -44,6 +55,7 @@ def login(request, user_data: schema.LoginSchemaIn):
                 status_code=200,
             )
     except Exception as e:
+        logger.error(f"Error in login view: {str(e)}", exc_info=True)
         return ResponseService.error(
                 message='ورود ناموفق!',
                 errors={'detail': str(e)},

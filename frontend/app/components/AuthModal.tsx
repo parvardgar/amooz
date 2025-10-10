@@ -9,10 +9,10 @@ interface AuthModalProps {
   mode: 'login' | 'signup';
 }
 
-type UserRole = 'learner' | 'teacher' | 'parent';
+type UserRole = 'student' | 'teacher' | 'parent';
 
 const roleMap: Record<UserRole, number> = {
-  'learner': 0,
+  'student': 0,
   'teacher': 2,
   'parent': 3
 };
@@ -21,7 +21,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState<UserRole>('learner');
+  const [selectedRole, setSelectedRole] = useState<UserRole>('student');
   const { login, signup, isLoading, error } = useAuth();
 
   if (!isOpen) return null;
@@ -52,7 +52,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     setMobile('');
     setPassword('');
     setConfirmPassword('');
-    setSelectedRole('learner');
+    setSelectedRole('student');
   };
 
   const switchToLogin = () => {
@@ -62,8 +62,8 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
 
   const roles: { id: UserRole; label: string; description: string }[] = [
     {
-      id: 'learner',
-      label: 'Learner',
+      id: 'student',
+      label: 'Student',
       description: 'Start your learning journey'
     },
     {

@@ -27,7 +27,7 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('username', mobile)
-        extra_fields.setdefault('role', 5)
+        extra_fields.setdefault('role', 4)
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -38,16 +38,14 @@ class CustomUserManager(UserManager):
    
 class User(AbstractUser):
     STUDENT = 0
-    VOLUNTEER = 1
-    TEACHER = 2
-    SUPER = 3
-    HERO = 4
-    ADMIN = 5
+    TEACHER = 1
+    PARENT = 2
+    HERO = 3
+    ADMIN = 4
     ROLES = (
         (STUDENT, 'Student'),
-        (VOLUNTEER, 'Volunteer'),
         (TEACHER, 'Teacher'),
-        (SUPER, 'Super'),
+        (PARENT, 'Parent'),
         (HERO, 'Hero'),
         (ADMIN, 'Admin'),
     )
@@ -115,6 +113,10 @@ class StudentProfile(BaseProfile):
         (JUNIOR, 'Junior'),
         (SENIOR , 'Senior')
     )
+    parent = models.ForeignKey(
+        to='ParentProfile', on_delete=models.PROTECT,
+        related_name='students', null=True, blank=True
+    )
     # subjects_of_interest = models.ManyToManyField('core.Subject', blank=True)
     consecutive_login_days = models.PositiveIntegerField(default=0)
     school_address = models.TextField(blank=True, null=True)
@@ -165,7 +167,7 @@ class TeacherProfile(BaseProfile):
         ]
 
     def save(self, *args, **kwargs):
-        if self.user.role != 3:
+        if self.user.role != 1:
             raise ValidationError('Teacher Profile can only be linked to Teacher user type')
         super().save(*args, **kwargs)
 
@@ -173,59 +175,12 @@ class TeacherProfile(BaseProfile):
         return f'Teacher:{self.user.mobile}'
 
 
-class VolunteerProfile(BaseProfile):
-    specialization = models.CharField(max_length=100, null=True, blank=True)
-    years_of_experience = models.PositiveIntegerField(null=True, blank=True)
-    bio = models.TextField(null=True, blank=True)
-    education = models.TextField(null=True, blank=True)
-    languages = models.JSONField(default=list)  
-    available_hours = models.JSONField(default=dict)
-    consultation_fee = models.FloatField(default=0.0)
-    rating = models.FloatField(default=0.0)
-    is_approved = models.BooleanField(default=False)
+class ParentProfile(BaseProfile):
 
     def __str__(self):
-        return f'Volunteer:{self.user.mobile}'
+        return f'Parent:{self.user.mobile}'
     
     def save(self, *args, **kwargs):
-        if self.user.role != 1:
+        if self.user.role != 2:
             raise ValidationError('Volunteer Profile can only be linked to Volunteer user type')
         super().save(*args, **kwargs)
-
-
-# class SuperProfile(BaseProfile):
-#     area_of_expertise = models.CharField(max_length=100, null=True, blank=True)
-#     certifications = models.JSONField(default=list)
-#     experience_summary = models.TextField(null=True, blank=True)
-#     hourly_rate = models.FloatField(default=0.0)
-#     available_for_projects = models.BooleanField(default=True)
-#     skills = models.JSONField(default=list)
-#     portfolio_link = models.URLField(blank=True, null=True)
-#     is_approved = models.BooleanField(default=False)
-
-#     def save(self, *args, **kwargs):
-#         if self.user.role != 3:
-#             raise ValidationError("ExpertProfile can only be linked to expert user type")
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return f"Expert:{self.user.mobile}"
-    
-
-# class HeroProfile(BaseProfile):
-#     area_of_expertise = models.CharField(max_length=100, null=True, blank=True)
-#     certifications = models.JSONField(default=list)
-#     experience_summary = models.TextField(null=True, blank=True)
-#     hourly_rate = models.FloatField(default=0.0)
-#     available_for_projects = models.BooleanField(default=True)
-#     skills = models.JSONField(default=list)
-#     portfolio_link = models.URLField(blank=True, null=True)
-#     is_approved = models.BooleanField(default=False)
-
-#     def save(self, *args, **kwargs):
-#         if self.user.role != 3:
-#             raise ValidationError("ExpertProfile can only be linked to expert user type")
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return f"Expert:{self.user.mobile}"

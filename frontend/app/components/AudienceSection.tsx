@@ -7,7 +7,7 @@ interface AudienceItem {
 export default function AudienceSection() {
   const audienceItems: AudienceItem[] = [
     {
-      title: 'Learners',
+      title: 'Students',
       description: 'Students of all ages can build and deepen their skills with our engaging content.',
       icon: '🎓',
     },
@@ -31,7 +31,7 @@ export default function AudienceSection() {
             Who can benefit from LearnHub?
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Our platform is designed to support learners, educators, and families in their educational journey.
+            Our platform is designed to support students, educators, and families in their educational journey.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
