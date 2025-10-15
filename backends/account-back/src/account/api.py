@@ -86,7 +86,9 @@ def logout(request, token_data: schema.LogoutSchemaIn):
             status_code=500
         )
 
-@router.post('/create/Student/profile', auth=JWTAuth())
+# Student CRUD #
+
+@router.post('/create/student/profile', auth=JWTAuth())
 def create_student_profile(request, user_data: schema.CreateStudentProfileSchemaIn):
     try:
         user = request.auth
@@ -107,8 +109,76 @@ def create_student_profile(request, user_data: schema.CreateStudentProfileSchema
                 errors={'detail': str(e)},
                 status_code=400
             )
-      
-@router.post('/create/Teacher/profile', auth=JWTAuth())
+    
+@router.get('/get/student/profile', auth=JWTAuth())
+def get_student_profile(request, user_data: schema.CreateStudentProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateStudentProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.StudentProfileCommandHandler()
+        profile  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دانش آموز با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دانش آموز با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.put('/update/student/profile', auth=JWTAuth())
+def update_student_profile(request, user_data: schema.CreateStudentProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateStudentProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.StudentProfileCommandHandler()
+        profile  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دانش آموز با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دانش آموز با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.delete('/delete/student/profile', auth=JWTAuth())
+def delete_student_profile(request, user_data: schema.CreateStudentProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateStudentProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.StudentProfileCommandHandler()
+        profile  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دانش آموز با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دانش آموز با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+
+# Teacher CRUD
+
+@router.post('/create/teacher/profile', auth=JWTAuth())
 def create_teacher_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
     try:
         user = request.auth
@@ -130,6 +200,161 @@ def create_teacher_profile(request, user_data: schema.CreateTeacherProfileSchema
                 status_code=400
             )
     
+@router.get('/get/teacher/profile', auth=JWTAuth())
+def get_teacher_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.put('/update/teacher/profile', auth=JWTAuth())
+def update_teacher_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.delete('/delete/teacher/profile', auth=JWTAuth())
+def delete_teacher_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+
+# Parent CRUD
+
+@router.post('/create/parent/profile', auth=JWTAuth())
+def create_parent_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.get('/get/parent/profile', auth=JWTAuth())
+def get_parent_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.put('/update/parent/profile', auth=JWTAuth())
+def update_parent_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.delete('/delete/parent/profile', auth=JWTAuth())
+def delete_parent_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
+    try:
+        user = request.auth
+        command = acc_cmd.CreateTeacherProfileCommand(user=user, **user_data.dict())
+        handler = acc_cmd.TeacherProfileCommandHandler()
+        Teacher  = handler.handle(command)
+        return ResponseService.success(
+            message='پروفایل دکتر با موفقیت ساخته شد.',
+            data={
+                'user': user.mobile,
+                'role': user.get_role_display()
+            },
+            status_code=201
+        )
+    except Exception as e:
+        return ResponseService.error(
+                message='ساخت پروفایل دکتر با مشکل مواجه شد!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
 
 # @router.put("/{user_id}", response=UserOut)
 # def update_user(request, user_id: int, payload: UserIn):

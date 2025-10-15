@@ -43,17 +43,9 @@ class StudentProfileRepository(DjangoRepository[AccModels.StudentProfile]):
     def __init__(self):
         super().__init__(AccModels.StudentProfile)
 
-    # --- Core Methods ---
-    # def create(self, user: AccModels.User, **profile_data) -> AccModels.StudentProfile:
-    #     """
-    #     Creates a StudentProfile linked to an existing User.
-    #     Example: repo.create(user_obj, {"allergies": "Pollen"})
-    #     """
-    #     return super().create(user=user, **profile_data)
-    
-    def get_by_user(self, user: AccModels.User) -> Optional[AccModels.StudentProfile]:
+    def get_by_user_mobile(self, user_mobile: str) -> Optional[AccModels.StudentProfile]:
         """Get profile directly from User instance (uses OneToOne reverse lookup)"""
-        return user.Studentprofile  # Leverages the related_name
+        return self.model_class.get(user_mobile=user_mobile)  # Leverages the related_name
 
     # --- Enhanced Utility Methods ---
     def update_medical_history(self, user_id: int, new_history: str) -> Optional[AccModels.StudentProfile]:

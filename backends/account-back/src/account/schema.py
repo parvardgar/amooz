@@ -54,6 +54,20 @@ class CreateStudentProfileSchemaIn(BaseProfileSchema):
     consecutive_login_days: Optional[int] = None 
 
 
+class GetStudentProfileSchemaOut(BaseProfileSchema):
+    school_address: Optional[str] = None
+    school_name: Optional[str] = None
+    grade: Optional[str] 
+    consecutive_login_days: Optional[int] = None
+
+
+class UpdateStudentProfileSchemaIn(BaseProfileSchema):
+    school_address: Optional[str] = None
+    school_name: Optional[str] = None
+    grade: Optional[str] 
+    consecutive_login_days: Optional[int] = None 
+
+
 class CreateTeacherProfileSchemaIn(Schema):
     license_number: Optional[str] = None
     specialization: Optional[str] = None
@@ -79,22 +93,9 @@ class CreateTeacherProfileSchemaIn(Schema):
         return end
 
 
-# Not Used
-class RegisterSchemaOut(Schema):
-    mobile: str
-    role: str
-
-    @staticmethod
-    def resolve_role(obj):
-        # Get the role string from the choices
-        role_dict = dict(obj.ROLES)
-        return role_dict.get(obj.role, 'Simple')
 
 
 
-# Not Used
-class LoginSchemaOut(Schema):
-    pass
 
 
 # Fully Validated

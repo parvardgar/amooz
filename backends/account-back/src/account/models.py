@@ -27,7 +27,7 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('username', mobile)
-        extra_fields.setdefault('role', 4)
+        extra_fields.setdefault('role', 3773)
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -41,7 +41,7 @@ class User(AbstractUser):
     TEACHER = 1
     PARENT = 2
     HERO = 3
-    ADMIN = 4
+    ADMIN = 3773
     ROLES = (
         (STUDENT, 'Student'),
         (TEACHER, 'Teacher'),
