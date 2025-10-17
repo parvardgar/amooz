@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+textforme.txt
 # Migrations
 */migrations/*.py
 # Except the __init__.py files
@@ -27,7 +27,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/

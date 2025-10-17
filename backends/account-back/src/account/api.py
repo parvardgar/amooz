@@ -21,7 +21,7 @@ def register(request, user_data: schema.RegisterSchemaIn):
         user = handler.handle(command)
         login_data = acc_svc.AuthService().login(**user_data.dict())
         logger.info(f'Register Success  for User{user.mobile}')
-        return ResponseService.success(
+        return ResponseService.success_token(
             message='ثبت نام موفق!',
             data={
                 'mobile': user.mobile,
@@ -45,7 +45,31 @@ def login(request, user_data: schema.LoginSchemaIn):
         service = acc_svc.AuthService()
         user = service.login(**user_data.dict())
         logger.info(f'Login Success  for User{user.get('mobile')}')
-        return ResponseService.success(
+        return ResponseService.success_token(
+                message='ورود موفق!',
+                data={
+                    'access': user.get('access'),
+                    'refresh': user.get('refresh'),
+                    'mobile': user.get('mobile'),
+                },
+                status_code=200,
+            )
+    except Exception as e:
+        logger.error(f"Error in login view: {str(e)}", exc_info=True)
+        return ResponseService.error(
+                message='ورود ناموفق!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+@router.post('/refresh', auth=None)
+def token_refresh(request):
+    try:
+        refresh_token = request.COOKIES.get('refresh')
+        service = acc_svc.AuthService()
+        user = service.login(**user_data.dict())
+        logger.info(f'Login Success  for User{user.get('mobile')}')
+        return ResponseService.success_token(
                 message='ورود موفق!',
                 data={
                     'access': user.get('access'),

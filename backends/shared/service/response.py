@@ -20,6 +20,42 @@ class ResponseService:
     )
 
     @staticmethod
+    def success_token(
+        data: Dict[str, Any] = None,
+        message: str = None,
+        status_code: int = 200,
+    ) -> Dict[str, Any]:
+        """Standard success response"""
+        access = data.pop('access')
+        refresh = data.pop('refresh')
+        response = JsonResponse(
+                {
+                    "success": True,
+                    "message": message,
+                    "data": data,
+                    "errors": None,
+                },
+            status=status_code,
+        )
+        response.set_cookie(
+            key='access',
+            value=access,
+            httponly=True,
+            secure=False,   # change to True with HTTPS Production
+            samesite='Strict',
+            max_age=60 * 15,  # 5 minutes
+        )
+        response.set_cookie(
+            key='refresh',
+            value=refresh,
+            httponly=True,
+            secure=False,   # change to True with HTTPS Production
+            samesite='Strict',
+            max_age=60 * 60 * 24 * 7,  # 7 days
+        )
+        return response
+
+    @staticmethod
     def error(
         message: str = "An error occurred",
         errors: Dict[str, Any] = None,
@@ -57,3 +93,5 @@ class ResponseService:
             message=message,
             status_code=404,
         )
+    
+
