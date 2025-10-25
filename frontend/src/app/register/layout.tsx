@@ -6,9 +6,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <p> This is from app/Register/layout </p>
-        <AuthProvider>
           {children}
-        </AuthProvider>
       </body>
     </html>
   );

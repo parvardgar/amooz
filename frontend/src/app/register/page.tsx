@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 
+import { UserRole } from "../../constants/roles";
+
 export default function SignupPage() {
   const [mobile, setMobile] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const [role, setRole] = useState<number | "">("");
   const [password, setPassword] = useState("");
   const [password_confirm, setPasswordConfirm] = useState("");
@@ -16,12 +20,27 @@ export default function SignupPage() {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mobile, role, password, password_confirm }),
+      body: JSON.stringify({
+        mobile, first_name, last_name,
+        role, password, password_confirm 
+      }),
       credentials: "include",
     });
 
     if (res.ok) {
-      window.location.href = "/profile"; // auto-login success
+      let redirectUrl = "/profile";
+      switch (role) {
+        case UserRole.Student:
+          redirectUrl = "/profile/create/student";
+          break;
+        case UserRole.Teacher:
+          redirectUrl = "/profile/create/teacher";
+          break;
+        case UserRole.Parent:
+          redirectUrl = "/profile/create/parent";
+          break;
+      }
+      window.location.href = redirectUrl;
     } else {
       const data = await res.json();
       setError(data.error || "Signup failed");
@@ -43,6 +62,20 @@ export default function SignupPage() {
           onChange={(e) => setMobile(e.target.value)}
           className="w-full p-2 border rounded-md"
         />
+        <input
+          type="text"
+          placeholder="first name"
+          value={first_name}
+          onChange={(e) => setFirstName(e.target.value)}
+          className="w-full p-2 border rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="last name"
+          value={last_name}
+          onChange={(e) => setLastName(e.target.value)}
+          className="w-full p-2 border rounded-md"
+        />
         <select
           value={role}
           onChange={(e) => setRole(parseInt(e.target.value, 10))}
@@ -51,6 +84,7 @@ export default function SignupPage() {
           <option value="">Select role</option>
           <option value={0}>Student</option>
           <option value={1}>Teacher</option>
+          <option value={2}>Parent</option>
         </select>
         <input 
           type="password"

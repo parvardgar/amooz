@@ -5,10 +5,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <p> This is from app/layout </p>
-        <AuthProvider>
+          <AuthProvider>
           {children}
-        </AuthProvider>
+          </AuthProvider>
       </body>
     </html>
   );

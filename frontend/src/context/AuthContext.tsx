@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch current user from backend
   const fetchUser = useCallback(async (): Promise<User | null> => {
     try {
-      const res = await api.get("/profile");
+      const res = await api.get("/me");
       setUser(res.data);
       return res.data;
     } catch (err) {
@@ -84,30 +84,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initial mount: fetch user (and attempt refresh if needed)
   useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      try {
-        // Try to fetch user first
-        const u = await fetchUser();
-        if (!u) {
-          // if no user, try refresh once and try fetching again
-          const refreshed = await refresh();
-          if (refreshed) {
-            await fetchUser();
-          }
+  let mounted = true;
+  (async () => {
+    try {
+      let u = await fetchUser();
+      if (!u) {
+        const refreshed = await refresh();
+        if (refreshed) {
+          u = await fetchUser();
         }
-      } catch (err) {
-        console.error("Auth init error", err);
-      } finally {
-        if (mounted) setLoading(false);
       }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, [fetchUser, refresh]);
+    } catch (err) {
+      console.error("Auth init error", err);
+    } finally {
+      if (mounted) setLoading(false); // only once at the very end
+    }
+  })();
+  return () => {
+    mounted = false;
+  };
+}, [fetchUser, refresh]);
 
   // Background refresh: periodically refresh access token
   useEffect(() => {

@@ -1,8 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
-  const res = await fetch(`${process.env.DJANGO_API_URL}/api/token/refresh/`, {
+export async function POST(req: NextRequest) {
+  const res = await fetch(`${process.env.DJANGO_API_URL}/accounts/auth/token/refresh`, {
     method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
+      },
     credentials: "include", // send cookies
   });
 

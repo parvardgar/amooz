@@ -30,6 +30,9 @@ class AuthService:
         except Exception:
             return False
         
+    def refresh_token(refresh: str):
+        return str(refresh.access_token)
+        
     # def set_password(self, user: User, new_password: str) -> None:
     #     """Password setting without validation"""
     #     user.set_password(new_password)
@@ -89,7 +92,7 @@ class TeacherProfileService:
     
     def create_profile(self, user: get_user_model, **kwargs):
         # Add any business logic/validation here
-        if user.role != 3:  
+        if user.role != 1:  
             raise ValueError("Only Teachers can have Teacher profiles")
         return self.repository.create({"user": user, **kwargs})
     

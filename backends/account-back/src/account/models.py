@@ -103,11 +103,27 @@ class BaseProfile(models.Model):
 
 
 class StudentProfile(BaseProfile):
+    YEK =1
+    DOW = 2
+    SEH = 3
+    CHAHAR = 4
+    PANJ = 5
+    SHESH = 6
+    HAFT = 7
+    HASHT = 8
     FRESHMAN = 9
     SOPHOMORE = 10
     JUNIOR = 11
     SENIOR = 12
     GRADES = (
+        (YEK, 'Yek'),
+        (DOW, 'Dow'),
+        (SEH, 'Seh'),
+        (CHAHAR, 'Chahar'),
+        (PANJ, 'Panj'),
+        (SHESH, 'Shesh'),
+        (HAFT, 'Haft'),
+        (HASHT, 'Hasht'),
         (FRESHMAN, 'Freshman'),
         (SOPHOMORE, 'Sophomore'),
         (JUNIOR, 'Junior'),
@@ -117,6 +133,7 @@ class StudentProfile(BaseProfile):
         to='ParentProfile', on_delete=models.PROTECT,
         related_name='students', null=True, blank=True
     )
+    last_year_avg = models.FloatField(null=True, blank=True)
     # subjects_of_interest = models.ManyToManyField('core.Subject', blank=True)
     consecutive_login_days = models.PositiveIntegerField(default=0)
     school_address = models.TextField(blank=True, null=True)

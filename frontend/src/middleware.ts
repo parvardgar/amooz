@@ -19,7 +19,6 @@ async function tryRefreshToken(req: NextRequest) {
 export async function middleware(req: NextRequest) {
   const access = req.cookies.get("access")?.value;
   const url = req.nextUrl.clone();
-
   if (!access) {
     // try refreshing immediately
     const refreshed = await tryRefreshToken(req);

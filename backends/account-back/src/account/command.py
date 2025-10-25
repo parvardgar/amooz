@@ -12,6 +12,8 @@ from account import repository, service, models as acc_mdl
 @dataclass
 class CreateUserCommand(Command):
     mobile: str
+    first_name: str
+    last_name: str
     role: int
     password: str
     password_confirm: str
@@ -57,6 +59,8 @@ class UserCommandHandler(BaseCommandHandler):
         user_data = {
             'username': command.username,
             'mobile': command.mobile,
+            'first_name': command.first_name,
+            'last_name': command.last_name,
             'role': command.role,
             'password': command.password
         }
@@ -85,10 +89,11 @@ class BaseProfileCommand(Command):
 
 @dataclass
 class CreateStudentProfileCommand(BaseProfileCommand):
+    last_year_avg: Optional[float] = 0.0
     school_address: Optional[str] = None
     school_name: Optional[str] = None
     grade: Optional[str] = None 
-    consecutive_login_days: Optional[int] = None 
+    
 
 
 @dataclass

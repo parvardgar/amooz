@@ -42,7 +42,7 @@ class ResponseService:
             value=access,
             httponly=True,
             secure=False,   # change to True with HTTPS Production
-            samesite='Strict',
+            samesite='Lax',
             max_age=60 * 15,  # 5 minutes
         )
         response.set_cookie(
@@ -50,7 +50,7 @@ class ResponseService:
             value=refresh,
             httponly=True,
             secure=False,   # change to True with HTTPS Production
-            samesite='Strict',
+            samesite='Lax',
             max_age=60 * 60 * 24 * 7,  # 7 days
         )
         return response

@@ -8,6 +8,8 @@ from decimal import Decimal
 
 class RegisterSchemaIn(Schema):
     mobile: str = Field(..., min_length=11, max_length=11)
+    first_name: str
+    last_name: str
     role: Literal[0, 1, 2, 3, 4, 5, 6] 
     password: str
     password_confirm: str
@@ -50,8 +52,8 @@ class BaseProfileSchema(Schema):
 class CreateStudentProfileSchemaIn(BaseProfileSchema):
     school_address: Optional[str] = None
     school_name: Optional[str] = None
-    grade: Optional[str] 
-    consecutive_login_days: Optional[int] = None 
+    grade: Optional[str]
+    last_year_avg: Optional[float] 
 
 
 class GetStudentProfileSchemaOut(BaseProfileSchema):

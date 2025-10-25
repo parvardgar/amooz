@@ -4,7 +4,8 @@ from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 
 from shared.service.response import ResponseService
-from account import schema, service as acc_svc, command as acc_cmd
+from shared.service.auth_cookie import CookieJWTAuth
+from account import schema, service as acc_svc, command as acc_cmd, query as acc_query
 
 router = Router()
 
@@ -62,29 +63,37 @@ def login(request, user_data: schema.LoginSchemaIn):
                 status_code=400
             )
     
-@router.post('/refresh', auth=None)
-def token_refresh(request):
+@router.post('/token/refresh', auth=None)
+def refresh_token(request):
+    """
+    Refresh JWT access token using the refresh token stored in cookies.
+    """
     try:
-        refresh_token = request.COOKIES.get('refresh')
-        service = acc_svc.AuthService()
-        user = service.login(**user_data.dict())
-        logger.info(f'Login Success  for User{user.get('mobile')}')
+        # Get the refresh token from cookies
+        refresh_token = request.COOKIES.get("refresh")
+        if refresh_token is None:
+            logger.warning("Refresh token missing from cookies.")
+            return ResponseService.error(
+                message="Refresh token missing.",
+                errors={"refresh": "Token not found in cookies."},
+                status_code=401,
+            )
+
+        access_token = acc_svc.AuthService().refresh_token(refresh_token)
+
+        # ✅ Create response
         return ResponseService.success_token(
-                message='ورود موفق!',
-                data={
-                    'access': user.get('access'),
-                    'refresh': user.get('refresh'),
-                    'mobile': user.get('mobile'),
-                },
-                status_code=200,
-            )
+            message="Access token refreshed successfully.",
+            data={"refresh": refresh_token, "access": access_token},
+            status_code=200,
+        )
     except Exception as e:
-        logger.error(f"Error in login view: {str(e)}", exc_info=True)
+        logger.error(f"Error in token refresh: {str(e)}", exc_info=True)
         return ResponseService.error(
-                message='ورود ناموفق!',
-                errors={'detail': str(e)},
-                status_code=400
-            )
+            message="Token refresh failed.",
+            errors={"detail": str(e)},
+            status_code=400,
+        )
     
 @router.post('/logout', auth=None)
 def logout(request, token_data: schema.LogoutSchemaIn):
@@ -110,9 +119,38 @@ def logout(request, token_data: schema.LogoutSchemaIn):
             status_code=500
         )
 
+@router.get('/me', auth=CookieJWTAuth())
+def me(request):
+    try:
+        query = acc_query.GetUserByMobileQuery(request.auth.mobile)
+        handler = acc_query.UserQueryHandler()
+        user = handler.handle(query)
+        
+        logger.info(f'ME Query Success  for User{user.mobile}')
+        return ResponseService.success(
+            message=' موفق!',
+            data={
+                'mobile': user.mobile,
+                'role': user.get_role_display(),
+                'profile': {
+                    'subject': 'Math',
+                    'bio': '10 years of experience'
+                }
+            },
+            status_code=201
+        )
+    except Exception as e:
+        logger.error(f'Error in register view: {str(e)}', exc_info=True)
+        return ResponseService.error(
+                message='ثبت نام ناموفق!',
+                errors={'detail': str(e)},
+                status_code=400
+            )
+    
+
 # Student CRUD #
 
-@router.post('/create/student/profile', auth=JWTAuth())
+@router.post('/create/student/profile', auth=CookieJWTAuth())
 def create_student_profile(request, user_data: schema.CreateStudentProfileSchemaIn):
     try:
         user = request.auth
@@ -202,7 +240,7 @@ def delete_student_profile(request, user_data: schema.CreateStudentProfileSchema
 
 # Teacher CRUD
 
-@router.post('/create/teacher/profile', auth=JWTAuth())
+@router.post('/create/teacher/profile', auth=CookieJWTAuth())
 def create_teacher_profile(request, user_data: schema.CreateTeacherProfileSchemaIn):
     try:
         user = request.auth
@@ -210,7 +248,7 @@ def create_teacher_profile(request, user_data: schema.CreateTeacherProfileSchema
         handler = acc_cmd.TeacherProfileCommandHandler()
         Teacher  = handler.handle(command)
         return ResponseService.success(
-            message='پروفایل دکتر با موفقیت ساخته شد.',
+            message='پروفایل معلم با موفقیت ساخته شد.',
             data={
                 'user': user.mobile,
                 'role': user.get_role_display()
@@ -380,7 +418,7 @@ def delete_parent_profile(request, user_data: schema.CreateTeacherProfileSchemaI
                 status_code=400
             )
 
-# @router.put("/{user_id}", response=UserOut)
+# @router.put('/{user_id}", response=UserOut)
 # def update_user(request, user_id: int, payload: UserIn):
 #     command = UpdateUserCommand(user_id=user_id, **payload.dict())
 #     handler = UserCommandHandler()
